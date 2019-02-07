@@ -7,7 +7,7 @@ class Apple:
     def __init__(self, display):
         self.x_pos = 0
         self.y_pos = 0
-
+        
         self.display = display
 
         self.randomize()
@@ -19,6 +19,7 @@ class Apple:
 
         max_x = (height - bumper - Config['snake']['width'])
         max_y = (height - bumper - Config['snake']['height']) 
+        
         
         self.x_pos = random.randint(bumper, max_x)
         self.y_pos = random.randint(bumper, max_y)

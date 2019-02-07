@@ -6,6 +6,8 @@ class Snake:
     def __init__(self, display):
         self.x_pos = (Config['game']['width'] -30) / 2
         self.y_pos = (Config['game']['height'] - 30) / 2
+        self.prev_x_pos = (Config['game']['width'] -30) / 2
+        self.prev_y_pos = (Config['game']['height'] - 30) / 2
         self.display = display
         self.body = []
         self.max_size = 0
@@ -40,6 +42,8 @@ class Snake:
 
     def move(self, x_change, y_change):
         self.body.append((self.x_pos, self.y_pos))
+        self.prev_x_pos = self.x_pos
+        self.prev_y_pos = self.y_pos
         self.x_pos += x_change
         self.y_pos += y_change
 

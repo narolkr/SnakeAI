@@ -8,20 +8,29 @@ class Game:
     def __init__(self, display):
         self.display = display
         self.score = 0
+        self.done = False
+        self.snake = Snake(self.display)
+        self.apple = Apple(self.display)        
+    
+    def start(self):
+        return self.generate_observations()
 
+    
     def loop(self):
         clock = pygame.time.Clock()
-        snake = Snake(self.display)
-        apple = Apple(self.display)
+        # self.snake = Snake(self.display)
+        # self.apple = Apple(self.display)
 
         x_change = 0
         y_change = 0
         
         self.score = 0
 
+
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+
+                if self.done == True or event.type == pygame.QUIT:
                     exit()
 
                 if event.type == pygame.KEYDOWN:
@@ -53,34 +62,35 @@ class Game:
             )
             
             # Draw an apple
-            apple_rect = apple.draw()
+            apple_rect = self.apple.draw()
 
             # Move and Re-Draw Snake
-            snake.move(x_change, y_change)
-            snake_rect = snake.draw()
-            snake.draw_body()
+            self.snake.move(x_change, y_change)
+            self.snake_rect = self.snake.draw()
+            self.snake.draw_body()
 
             # Detect with corners
-            if (snake.x_pos >= Config['game']['width'] and x_change>0):
-                snake.x_pos = 0
-            if (snake.x_pos < 0 and x_change<0):
-                snake.x_pos = Config['game']['width']- 1
-            if (snake.y_pos > Config['game']['height'] + Config['game']['bumper_size'] and y_change>0):
-                snake.y_pos = Config['game']['bumper_size']
-            if (snake.y_pos < Config['game']['bumper_size'] and y_change<0):
-                snake.y_pos = Config['game']['height'] + Config['game']['bumper_size'] - 1
+            if (self.snake.x_pos >= Config['game']['width'] and x_change>0):
+                self.snake.x_pos = 0
+            if (self.snake.x_pos < 0 and x_change<0):
+                self.snake.x_pos = Config['game']['width']- 1
+            if (self.snake.y_pos > Config['game']['height'] + Config['game']['bumper_size'] and y_change>0):
+                self.snake.y_pos = Config['game']['bumper_size']
+            if (self.snake.y_pos < Config['game']['bumper_size'] and y_change<0):
+                self.snake.y_pos = Config['game']['height'] + Config['game']['bumper_size'] - 1
 
             # Detect collision with apple
             if apple_rect.colliderect(snake_rect):
-                apple.randomize()
+                self.apple.randomize()
                 self.score += 1
-                snake.eat()
+                self.snake.eat()
 
             # Collide with Self
-            if len(snake.body) >= 1:
-                for cell in snake.body:
-                    if snake.x_pos == cell[0] and snake.y_pos == cell[1]:
-                        self.loop()
+            if len(self.snake.body) >= 1:
+                for cell in self.snake.body:
+                    if self.snake.x_pos == cell[0] and self.snake.y_pos == cell[1]:
+                        self.done = True
+                        # self.loop()
 
             # Initialize font and draw title and score text
             pygame.font.init()
@@ -110,3 +120,7 @@ class Game:
 
             pygame.display.update()
             clock.tick(Config['game']['fps'])
+
+    def generate_observations(self):
+        return self.done, self.score, self.snake, self.apple
+  
